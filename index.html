@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Carousel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url(bb.jpg) no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            padding: 5px;
+        }
+        h1 {
+            color: #f6f8f8;
+            padding: 10px;
+        }
+        #uploadForm {
+            padding: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            width: 300px;
+            background-color: rgba(120, 83, 163, 0.7);
+            margin-top: 50px;
+        }
+        #carouselContainer {
+            width: 800px;
+            height: 500px;
+            margin: 40px auto;
+            border-radius: 15px;
+            border: 5px solid #456d92;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            background-color: white;
+        }
+        #carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        #carousel img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .arrow.left {
+            left: 10px;
+        }
+        .arrow.right {
+            right: 10px;
+        }
+        #errorMsg {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+        .upload-status {
+            color: green;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Image Carousel Creator</h1>
+
+    <div id="errorMsg">Please upload three images.</div>
+    
+    <form id="uploadForm" onsubmit="event.preventDefault(); previewImages();">
+        <h2>Upload 3 Images</h2>
+        <input type="file" id="imageUpload1" accept="image/*">
+        <input type="file" id="imageUpload2" accept="image/*">
+        <input type="file" id="imageUpload3" accept="image/*">
+        <button type="submit">Create Carousel</button>
+        <p class="upload-status" id="uploadStatus"></p>
+    </form>
+
+    <div id="carouselContainer">
+        <button class="arrow left" onclick="prev()">&#10094;</button>
+        <div id="carousel"></div>
+        <button class="arrow right" onclick="next()">&#10095;</button>
+    </div>
+
+    <script>
+        let current = 0;
+        let images = [];
+        let autoSlide;
+
+        function previewImages() {
+            const carousel = document.getElementById('carousel');
+            const errorMsg = document.getElementById('errorMsg');
+            carousel.innerHTML = ''; 
+            images = [];
+
+            for (let i = 1; i <= 3; i++) {
+                const fileInput = document.getElementById('imageUpload' + i);
+                if (fileInput.files[0]) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(fileInput.files[0]);
+                    if (i === 1) img.classList.add('active');
+                    carousel.appendChild(img);
+                    images.push(img);
+                }
+            }
+
+            if (images.length === 0) {
+                errorMsg.style.display = "block";
+                setTimeout(() => {
+                    errorMsg.style.display = "none";
+                }, 2500);
+            } else {
+                errorMsg.style.display = "none";
+                startAutoSlide(); // start autoplay once images are uploaded
+            }
+        }
+
+        function showImage(index) {
+            images.forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+            });
+        }
+
+        function prev() {
+            if (images.length === 0) return;
+            current = (current - 1 + images.length) % images.length;
+            updateCarousel();
+        }
+
+        function next() {
+            if (images.length === 0) return;
+            current = (current + 1) % images.length;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const carousel = document.getElementById('carousel');
+            carousel.style.transform = `translateX(-${current * 100}%)`;
+        }
+
+        function startAutoSlide() {
+            clearInterval(autoSlide);
+            autoSlide = setInterval(() => {
+                next();
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>
