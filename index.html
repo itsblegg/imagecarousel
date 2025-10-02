@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Carousel</title>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background: white;
+  background-size: cover; 
+  text-align: center;
+  padding: 5px;
+}
+form {
+  padding: 10px;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  width: 250px;         
+  text-align: center;  
+  margin-top: 40px;
+  margin-left: 100px;    
+  display: block;    
+  float: left;
+  background: rgba(255, 165, 75, 0.515);         
+}
+
+h1 {
+  color: #8d0078;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+#errorMsg {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 107px;
+  background: #ff8800;
+  color: rgb(138, 0, 0);
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-weight: bold;
+  z-index: 1000;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 10px auto;
+}
+.carouselWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* spacing between arrows and container */
+  margin-top: 50px;
+}
+
+#carouselContainer {
+  width: 800px;
+  height: 500px;
+  border-radius: 15px;
+  border: 5px solid #f8682f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: none;
+}
+
+.carousel img.active {
+  display: block;
+}
+
+.arrow {
+  padding: 12px 18px;
+  border: none;
+  background: #ffb11f;
+  color: rgb(95, 21, 0);
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 20px;
+  transition: background 0.3s;
+}
+
+.arrow:hover {
+  background: #d22626;
+}
+
+.arrow.left {
+  left: -50px; 
+}
+
+.arrow.right {
+  right: -50px; 
+}
+button {
+  padding: 8px 16px;
+  border: none;
+  background: #ffb11f;
+  color: rgb(105, 0, 0);
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+button:hover {
+  background: #d22626;
+}
+</style>
+</head>
+<body>
+
+<h1>Upload 3 Images for Carousel</h1>
+<div id="errorMsg"›Please upload Three (3) Images.</div>
+<form id="uploadForm"›
+    ‹input type="file"id="img1" accept="image/*" required›
+    ‹input type="file"id="img2" accept="image/*" required> 
+    <input type="file"id="img3" accept="image/*" required›
+    ‹br›
+    ‹button type="button" onclick="previewImages()"›Upload</button>
+  </form>
+
+<div class="carouselwrapper"›
+      ‹button class="arrow left" onclick="prev()" >8#10094;‹/button>
+
+    «div id-"carouselcontainer",
+   ‹div class="carousel" id="carousel"></div›
+</div>
+
+   ‹ button class="arrow right" onclick="next()"›8#10095;</button> ‹/div>
+  </div>
+
+<script>
+let current = 0;
+let images = [];
+let autoSlide;
+
+function previewImages() {
+  const carousel = document.getElementById('carousel');
+  const errorMsg = document.getElementById('errorMsg');
+  carousel.innerHTML = ''; 
+  images = [];
+
+  for (let i = 1; i <= 3; i++) {
+    const fileInput = document.getElementById('img' + i);
+    if (fileInput.files[0]) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(fileInput.files[0]);
+      if (i === 1) img.classList.add('active');
+      carousel.appendChild(img);
+      images.push(img);
+    }
+  }
+
+  if (images.length === 0) {
+    errorMsg.style.display = "block";
+    setTimeout(() => {
+      errorMsg.style.display = "none";
+    }, 2500);
+  } else {
+    errorMsg.style.display = "none";
+    startAutoSlide(); // start autoplay once images are uploaded
+  }
+}
+
+function showImage(index) {
+  images.forEach((img, i) => {
+    img.classList.toggle('active', i === index);
+  });
+}
+
+function prev() {
+  if (images.length === 0) return;
+  current = (current - 1 + images.length) % images.length;
+  showImage(current);
+}
+
+function next() {
+  if (images.length === 0) return;
+  current = (current + 1) % images.length;
+  showImage(current);
+}
+
+function startAutoSlide() {
+  clearInterval(autoSlide); // prevent multiple intervals
+  autoSlide = setInterval(() => {
+    next();
+  }, 1500); // change image every 3 seconds
+}
+</script>
+
+‹/body>
+</html>
